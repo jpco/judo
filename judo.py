@@ -128,12 +128,20 @@ def ls_by_subject(list_all, list_subject):
             if subj not in DEFAULT_LIST_SUBJECTS and not list_all:
                 continue
 
-            print ('\033[1m\033[34m{0} {1}\033[0m'.format(subj.upper(), '=' * (subj_len - len(subj))))
+            subj_printed = False
             for evt in subjects[subj]:
                 if evt.done:
                     if list_all:
+                        if not subj_printed:
+                            print ('\033[1m\033[34m{0} {1}\033[0m'.format(subj.upper(), '=' * (subj_len - len(subj))))
+                            subj_printed = True
+
                         print ('\033[31m x {0}: {1}\033[0m'.format(evt.id, evt.title))
                 else:
+                    if not subj_printed:
+                        print ('\033[1m\033[34m{0} {1}\033[0m'.format(subj.upper(), '=' * (subj_len - len(subj))))
+                        subj_printed = True
+
                     print (' - {0}: {1}'.format(evt.id, evt.title))
 
 
