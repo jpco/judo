@@ -37,12 +37,15 @@ import os
 import argparse
 import time
 import pickle
+import configparser
 
 # default defaults
 DEFAULT_SUBJECT = 'other'
-DEFAULT_LIST_SUBJECTS = ['electra', 'uts', 'wesley', 'other']
+DEFAULT_LIST_SUBJECTS = ['electra', 'uts', 'wesley', 'class', 'simech', 'other']
 DEFAULT_TIMEOUT = 60*60*24*7
 EVTS_FILE = '{}/.judo_evts'.format(os.path.expanduser('~')) 
+
+CONFIG_FILE = '{}/.judocfg'.format(os.path.expanduser('~'))
 
 class Event:
     def __init__(self, title, subject=None):
@@ -272,6 +275,31 @@ do_parser.set_defaults(func=do_cmd)
 undo_parser = subparsers.add_parser('undo')
 undo_parser.add_argument('id', type=int)
 undo_parser.set_defaults(func=undo_cmd)
+
+
+config = configparser.ConfigParser()
+config.read(CONFIG_FILE)
+if not 'config' in config:
+    print ('Malformed config.')
+    parser.print_help()
+    exit (1)
+else:
+    config = config['config']
+
+if 'Subject' in config:
+    DEFAULT_SUBJECT = config['Subject']
+if 'DoneTimeout' in config:
+    try:
+        DEFAULT_TIMEOUT = int(config['DoneTimeout'])
+    except Exception:
+        print ('Warning: malformed DoneTimeout entry in config.')
+if 'EventsFile' in config:
+    EVTS_FILE = os.path.abspath(os.path.expanduser(config['EventsFile']))
+if 'ListSubjects' in config:
+    DEFAULT_LIST_SUBJECTS = [DEFAULT_SUBJECT]
+    subjs = config['ListSubjects'].split(',')
+    for subj in subjs:
+        DEFAULT_LIST_SUBJECTS.append(subj.strip())
 
 
 # TODO (lol):

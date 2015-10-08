@@ -1,0 +1,6 @@
+[config]
+Subject = other
+DoneTimeout = 604800
+EventsFile = ~/.judo_evts
+
+ListSubjects = class, shopping, deathnote
